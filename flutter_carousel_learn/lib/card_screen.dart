@@ -16,13 +16,15 @@ class CardScreen extends StatefulWidget {
 class _CardScreenState extends State<CardScreen> {
   List<User> users = [];
   bool isLoading = true;
+  int myIndex = 0;
+  CarouselController carouselController = CarouselController();
 
-  void getUsers()async{
-    var result  = await UserService.fetchData();
+  void getUsers() async {
+    var result = await UserService.fetchData();
     setState(() {
-      users=result;
+      users = result;
     });
-    isLoading=false;
+    isLoading = false;
   }
 
   @override
@@ -31,22 +33,71 @@ class _CardScreenState extends State<CardScreen> {
     super.initState();
     getUsers();
   }
+
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
         appBar: AppBar(
           title: const Text("Dashboard"),
           actions: const [],
         ),
-        body: isLoading ? Center(child: CircularProgressIndicator(),):Center(
-          child: CarouselSlider.builder(
-              itemCount: users.length,
-              
-              itemBuilder: (context, index, realIndex) { 
-                var user = users[index];
-                return UserCard(
-                  avatar: user.avatar!, userName: '${user.firstName!} ${user.lastName!}', userEmail: user.email!);},
-              options: CarouselOptions(autoPlay: true)),
-        ));
+        body: isLoading
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : Center(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 400,
+                      child: CarouselSlider.builder(
+                          carouselController: carouselController,
+                          itemCount: users.length,
+                          itemBuilder: (context, index, realIndex) {
+                            var user = users[index];
+                            return UserCard(
+                                avatar: user.avatar!,
+                                userName:
+                                    '${user.firstName!} ${user.lastName!}',
+                                userEmail: user.email!);
+                          },
+                          options: CarouselOptions(
+                              onPageChanged: (index, reason) {
+                                myIndex = index;
+                                setState(() {});
+                              },
+                              autoPlay: true,
+                              height: 600,
+                              enableInfiniteScroll: false)),
+                    ),
+                    const SizedBox(
+                      height: 24.0,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: users.asMap().entries.map((entry) {
+                        return GestureDetector(
+                          onTap: () =>
+                              carouselController.animateToPage(entry.key),
+                          child: Container(
+                            width: 12.0,
+                            height: 12.0,
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 4.0),
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: (Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? Colors.white
+                                        : Colors.black)
+                                    .withOpacity(
+                                        myIndex == entry.key ? 0.9 : 0.4)),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+              ));
   }
 }
