@@ -18,12 +18,15 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext conte) {
     //make sure that ur provider is on the top of any other widget
-    return const MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: MultiProviderDemo(),
-      
+    return ChangeNotifierProvider<ApplicationColor>(
+      create: (conte) => ApplicationColor(),
+      child: const MaterialApp(
+          debugShowCheckedModeBanner: false,
+          home: AnimatedScreen(),
+        
+      ),
     );
   }
 }

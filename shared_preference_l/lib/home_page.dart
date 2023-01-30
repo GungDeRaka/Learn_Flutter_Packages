@@ -17,16 +17,27 @@ class _HomePageState extends State<HomePage> {
     SharedPreferences pref = await SharedPreferences.getInstance();
     pref.setString("nama", _controller.text);
     pref.setBool("ison", isOn);
+    
   }
 
-Future<String> loadNama ( ) async{
-  SharedPreferences pref =await SharedPreferences.getInstance();
-  return pref.getString("nama") ?? "No Name";
-}
-Future<bool> loadBool ( ) async{
-  SharedPreferences pref =await SharedPreferences.getInstance();
-  return pref.getBool("ison") ?? false;
-}
+  Future<String> loadNama() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    return pref.getString("nama") ?? "No Name";
+  }
+
+  Future<bool> loadBool() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    return pref.getBool("ison") ?? false;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      loadNama().then((value) => _controller.text = value);
+      loadBool().then((value) => isOn = value);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,9 +62,11 @@ Future<bool> loadBool ( ) async{
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.blueGrey,
             ),
-            onPressed: () {setState(() {
-              saveData();
-            });},
+            onPressed: () {
+              setState(() {
+                saveData();
+              });
+            },
             child: const Text("Save"),
           ),
           //load pref button
@@ -61,12 +74,7 @@ Future<bool> loadBool ( ) async{
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.blueGrey,
             ),
-            onPressed: () {
-              setState(() {
-                loadNama().then((value) => _controller.text = value);
-                loadBool().then((value) => isOn = value);
-              });
-            },
+            onPressed: () {},
             child: const Text("Load"),
           ),
         ],

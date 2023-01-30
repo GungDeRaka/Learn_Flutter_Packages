@@ -1,0 +1,25 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+class User {
+  final int? id;
+  final String? email;
+  final String? firstName;
+  final String? lastName;
+  final String? avatar;
+  User({
+    required this.id,
+    required this.email,
+    required this.firstName,
+    required this.lastName,
+    required this.avatar,
+  });
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      avatar: json['avatar'] ?? "",
+      email: json['email'] ?? "",
+      firstName: json['first_name'] ?? "",
+      lastName: json['last_name'] ?? "",
+      id: json['id'] ?? 0,
+    );
+  }
+}
